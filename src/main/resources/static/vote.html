@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>请投票</title>
+</head>
+
+<script>
+
+    function getElement(id) {
+        return window.document.getElementById(id)
+
+    }
+
+    function getValue(id) {
+        return getElement(id).value;
+    }
+
+
+    /* 封装ajax函数
+     * @param {string}opt.type http连接的方式，包括POST和GET两种方式
+     * @param {string}opt.url 发送请求的url
+     * @param {boolean}opt.async 是否为异步请求，true为异步的，false为同步的
+     * @param {object}opt.data 发送的参数，格式为对象类型
+     * @param {function}opt.success ajax发送并接收成功调用的回调函数
+     */
+    function ajax(opt) {
+
+        opt = opt || {};
+        opt.method = opt.method.toUpperCase() || 'POST';
+        opt.url = opt.url || '';
+        opt.async = opt.async || true;
+        opt.data = opt.data || null;
+        opt.success = opt.success || function () {
+        };
+        var xmlHttp = null;
+        if (XMLHttpRequest) {
+            xmlHttp = new XMLHttpRequest();
+        } else {
+            xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+        var params = [];
+        for (var key in opt.data) {
+            params.push(key + '=' + opt.data[key]);
+        }
+        var postData = params.join('&');
+
+        xmlHttp.onreadystatechange = function () {
+
+            // alert("onready, {readyState} ---------> " + (xmlHttp.readyState));
+            if (xmlHttp.readyState == 4 && (xmlHttp.status == 200 || xmlHttp.status == 0)) {
+                opt.success(JSON.parse(xmlHttp.responseText));//如果不是json数据可以去掉json转换
+            }
+        };
+
+
+        if (opt.method.toUpperCase() === 'POST') {
+            xmlHttp.open(opt.method, opt.url, opt.async);
+            // alert("open");
+            xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+            xmlHttp.send(postData);
+            alert("send");
+        } else if (opt.method.toUpperCase() === 'GET') {
+            xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+            xmlHttp.send(null);
+        }
+
+    }
+
+
+    function vote() {
+
+        alert('vote');
+
+        ajax({
+            method: 'POST',
+            url: 'http://localhost:8081/voteA/vote',
+            // url: 'http://www.baidu.com',
+            data: {
+                'a': getElement('A').checked,
+                'b': getElement('B').checked,
+                'c': getElement('C').checked,
+                'uid': '10',
+            },
+            success: function (obj) {
+                //在这里对获取的数据进行操作
+                alert('success');
+            }
+        })
+    }
+</script>
+
+<body>
+
+    <h3>请投票给你最喜欢的选项</h3>
+    <form method="post">
+        <input type="checkbox" value="A" id="A">A <br>
+        <input type="checkbox" value="B" id="B">B <br>
+        <input type="checkbox" value="C" id="C">C <br>
+        <button onclick="vote()">投票</button>
+    </form>
+
+
+</body>
+</html>

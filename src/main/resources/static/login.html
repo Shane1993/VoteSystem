@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+
+        /* 封装ajax函数
+         * @param {string}opt.type http连接的方式，包括POST和GET两种方式
+         * @param {string}opt.url 发送请求的url
+         * @param {boolean}opt.async 是否为异步请求，true为异步的，false为同步的
+         * @param {object}opt.data 发送的参数，格式为对象类型
+         * @param {function}opt.success ajax发送并接收成功调用的回调函数
+         */
+        function ajax(opt) {
+
+            opt = opt || {};
+            opt.method = opt.method.toUpperCase() || 'POST';
+            opt.url = opt.url || '';
+            opt.async = opt.async || true;
+            opt.data = opt.data || null;
+            opt.success = opt.success || function () {
+            };
+            var xmlHttp = null;
+            if (XMLHttpRequest) {
+                xmlHttp = new XMLHttpRequest();
+            } else {
+                xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+            }
+            var params = [];
+            for (var key in opt.data) {
+                params.push(key + '=' + opt.data[key]);
+            }
+            var postData = params.join('&');
+
+            xmlHttp.onreadystatechange = function () {
+
+                // alert("onready, {readyState} ---------> " + (xmlHttp.readyState));
+                if (xmlHttp.readyState == 4 && (xmlHttp.status == 200 || xmlHttp.status == 0)) {
+                    opt.success(JSON.parse(xmlHttp.responseText));//如果不是json数据可以去掉json转换
+                }
+            };
+
+
+            if (opt.method.toUpperCase() === 'POST') {
+                xmlHttp.open(opt.method, opt.url, opt.async);
+                // alert("open");
+                xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+                xmlHttp.send(postData);
+                alert("send");
+            } else if (opt.method.toUpperCase() === 'GET') {
+                xmlHttp.open(opt.method, opt.url + '?' + postData, opt.async);
+                xmlHttp.send(null);
+            }
+
+        }
+
+        function getUserInfo() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            return username + ' -> ' + password;
+        }
+
+        function getUsername() {
+            return username = document.getElementById('username').value;
+
+        }
+
+        function getPassword() {
+            return password = document.getElementById('password').value;
+        }
+
+
+        function register() {
+            var username = getUsername();
+            var password = getPassword();
+
+
+            ajax({
+                method: 'POST',
+                url: 'http://localhost:8081/user/register',
+                // url: 'http://www.baidu.com',
+                data: {
+                    'username': username,
+                    'password': password,
+                },
+                success: function (obj) {
+                    //在这里对获取的数据进行操作
+                    alert('success');
+                    for (key in obj) {
+                        alert('success key -> ' + key + ", value -> " + obj[key]);
+                    }
+                }
+            })
+        }
+
+        function login() {
+            var username = getUsername();
+            var password = getPassword();
+
+
+            ajax({
+                method: 'POST',
+                url: 'http://localhost:8081/user/login',
+                // url: 'http://www.baidu.com',
+                data: {
+                    'username': username,
+                    'password': password,
+                },
+                success: function (obj) {
+                    //在这里对获取的数据进行操作
+                    alert('success');
+                    for (key in obj) {
+                        alert('success key -> ' + key + ", value -> " + obj[key]);
+                    }
+                }
+            })
+        }
+
+        function jump() {
+            window.location.href = 'vote.html'
+
+        }
+
+    </script>
+</head>
+<body>
+你好，请登录
+<form method="post">
+    用户名：<br>
+    <input type="text" id="username" name="username" placeholder="用户名"> <br>
+    <input type="password" id="password" name="password" placeholder="密码"> <br>
+    <button onclick="register()">注册</button>
+    <button onclick="login()">登录</button>
+</form>
+<button onclick="jump()">跳转</button>
+</body>
+</html>

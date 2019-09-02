@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"><!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="com.example.vote.mapper.UserMapper">
+
+    <insert id="registerUser">
+        insert into user
+         (username, password)
+          values
+           (#{username}, #{password})
+    </insert>
+
+    <select id="loginUser" resultType="com.example.vote.bean.User">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+
+    <select id="findUser" resultType="com.example.vote.bean.User">
+        select * from user where username = #{username}
+    </select>
+
+    <update id="updateUser" parameterType="com.example.vote.bean.User">
+        update user set
+            auth_key = #{authKey},
+            age = #{age}
+        where
+            id = #{id}
+    </update>
+
+    <sql id="findUserSQL">
+        select * from user
+    </sql>
+
+</mapper>

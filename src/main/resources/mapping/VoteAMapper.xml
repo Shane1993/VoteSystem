@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"><!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="com.example.vote.mapper.VoteAMapper">
+
+    <insert id="insertVoteA">
+        insert into Vote_A
+        (a, b, c, uid) values (
+          #{a},
+          #{b},
+          #{c},
+          #{uid}
+        )
+    </insert>
+
+    <update id="updateVoteA">
+        update Vote_A
+          set a = #{a},
+          b = #{b},
+          c = #{c}
+          where uid = #{uid}
+    </update>
+
+    <select id="findVoteA" resultType="com.example.vote.bean.VoteABean">
+        select * from Vote_A where uid = #{uid}
+    </select>
+
+</mapper>
